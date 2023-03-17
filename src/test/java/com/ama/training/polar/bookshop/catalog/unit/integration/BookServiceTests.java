@@ -34,14 +34,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Execution(ExecutionMode.SAME_THREAD)
 public class BookServiceTests {
 
-    //private BookService bookService;
-
     private ApplicationContext applicationContext;
 
 
     @Autowired
     public BookServiceTests(BookService bookService, ApplicationContext applicationContext) {
-        //this.bookService = bookService;
         this.applicationContext = applicationContext;
     }
 

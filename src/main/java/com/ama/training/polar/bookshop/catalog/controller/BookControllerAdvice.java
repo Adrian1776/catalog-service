@@ -2,6 +2,7 @@ package com.ama.training.polar.bookshop.catalog.controller;
 
 import com.ama.training.polar.bookshop.catalog.exception.BookAlreadyExistsException;
 import com.ama.training.polar.bookshop.catalog.exception.BookNotFoundException;
+import io.swagger.v3.oas.annotations.Hidden;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -13,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestControllerAdvice
+@Hidden
 public class BookControllerAdvice {
 
     @ExceptionHandler(BookNotFoundException.class)

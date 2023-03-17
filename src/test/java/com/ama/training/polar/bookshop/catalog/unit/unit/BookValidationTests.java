@@ -2,6 +2,7 @@ package com.ama.training.polar.bookshop.catalog.unit.unit;
 
 import com.ama.training.polar.bookshop.catalog.model.Book;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import javax.validation.ConstraintViolation;

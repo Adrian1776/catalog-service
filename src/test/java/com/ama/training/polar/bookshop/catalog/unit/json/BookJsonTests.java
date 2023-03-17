@@ -1,6 +1,7 @@
 package com.ama.training.polar.bookshop.catalog.unit.json;
 
 import com.ama.training.polar.bookshop.catalog.model.Book;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.JsonTest;
