@@ -3,7 +3,7 @@ on: push
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: Adrian1776/catalog-service
+  IMAGE_NAME: adrian1776/catalog-service
   VERSION: latest
 
 jobs:
