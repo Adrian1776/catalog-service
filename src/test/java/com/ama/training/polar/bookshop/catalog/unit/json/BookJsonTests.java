@@ -18,7 +18,7 @@ public class BookJsonTests {
     
     @Test
     void testSerialize() throws Exception{
-        Book originalBook = new Book("1234567890", "Title", "Author", 9.8);
+        Book originalBook = Book.of("1234567890", "Title", "Author", 9.8);
 
         JsonContent<Book> writenBook = jsonTester.write(originalBook);
 
@@ -44,7 +44,7 @@ public class BookJsonTests {
         """;
         assertThat(jsonTester.parse(content))
                  .usingRecursiveComparison()
-                .isEqualTo(new Book("1234567890", "Title", "Author", 9.90));
+                .isEqualTo(Book.of("1234567890", "Title", "Author", 9.90));
     }
     
 }

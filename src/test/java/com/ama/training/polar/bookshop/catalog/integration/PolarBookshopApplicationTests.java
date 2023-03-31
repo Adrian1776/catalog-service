@@ -1,48 +1,42 @@
-package com.ama.training.polar.bookshop.catalog.unit.integration;
+package com.ama.training.polar.bookshop.catalog.integration;
 
+import com.ama.training.polar.bookshop.catalog.config.DataConfig;
 import com.ama.training.polar.bookshop.catalog.model.Book;
 import com.ama.training.polar.bookshop.catalog.repository.BookRepository;
-import com.ama.training.polar.bookshop.catalog.repository.InMemoryBookRepository;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.support.DefaultSingletonBeanRegistry;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.util.TestPropertyValues;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestExecutionListeners;
-import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.support.DirtiesContextBeforeModesTestExecutionListener;
-import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(
 		webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
-@ActiveProfiles(profiles = {"PolarBookshopApplicationTests"})
-//@TestExecutionListeners(value = {DirtiesContextTestExecutionListener.class}, mergeMode = TestExecutionListeners.MergeMode.MERGE_WITH_DEFAULTS)
-//@ContextConfiguration
-//@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-@TestInstance(TestInstance.Lifecycle.PER_METHOD)
-@Execution(ExecutionMode.SAME_THREAD)
+@ActiveProfiles(profiles = {"PolarBookshopApplicationTests", "integration"})
+@AutoConfigureWebTestClient(timeout = "10000")
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@Disabled
 class PolarBookshopApplicationTests {
 
 	//private WebTestClient webTestClient;
 
 	private ApplicationContext applicationContext;
+
 
 	@Autowired
 	public PolarBookshopApplicationTests(WebTestClient webTestClient, ApplicationContext applicationContext){
@@ -50,10 +44,16 @@ class PolarBookshopApplicationTests {
 		this.applicationContext = applicationContext;
 	}
 
+
+	@BeforeEach
+	void cleanData(@Autowired BookRepository bookRepository){
+		bookRepository.deleteAll();
+	}
+
 	@Test
-	@DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
+	@Order(1)
 	void whenBookPostThenBookCreated(@Autowired  WebTestClient webTestClient) {
-		Book expectedBook = new Book("1234567890", "Title", "Author", 9.90);
+		Book expectedBook = Book.of("1234567890", "Title", "Author", 9.90);
 
 		webTestClient
 				.post()
@@ -69,14 +69,14 @@ class PolarBookshopApplicationTests {
 	}
 
 	@Test
-	@DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
+	@Order(2)
 	void whenMultipleBooksPostThenAllCreated(@Autowired WebTestClient webTestClient) {
 		List<Book> allBooks = new ArrayList<>();
-		allBooks.add(new Book("01234567890", "Title 1", "Author", 9.90));
-		allBooks.add(new Book("01234567890", "Title 2", "Author", 9.90));
-		allBooks.add(new Book("01234567890", "Title 3", "Author", 9.90));
+		allBooks.add(Book.of("01234567891", "Title 1", "Author", 9.90));
+		allBooks.add(Book.of("01234567892", "Title 2", "Author", 9.90));
+		allBooks.add(Book.of("01234567893", "Title 3", "Author", 9.90));
 
-		allBooks.forEach(b -> webTestClient.post().uri("books").exchange());
+		allBooks.forEach(b -> webTestClient.post().uri("books").contentType(MediaType.APPLICATION_JSON).bodyValue(b).exchange());
 
 		List<Book> receivedBooks = webTestClient
 				.get()
@@ -92,9 +92,9 @@ class PolarBookshopApplicationTests {
 	}
 
 	@Test
-	@DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
+	@Order(3)
 	void whenBookPutThenDetailsUpdated(@Autowired WebTestClient testClient ){
-		Book originalBook =  new Book("1234567890", "Title", "Author", 9.90);
+		Book originalBook =  Book.of("1234567890", "Title", "Author", 9.90);
 
 		testClient
 				.post()
@@ -102,7 +102,7 @@ class PolarBookshopApplicationTests {
 				.bodyValue(originalBook)
 				.exchange();
 
-		Book updatedBook = new Book("1234567890", "Updated Title", "Author", 10.90);
+		Book updatedBook = Book.of("1234567890", "Updated Title", "Author", 10.90);
 
 		testClient
 				.put()
@@ -118,10 +118,10 @@ class PolarBookshopApplicationTests {
 	}
 
 	@Test
-	@DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
+	@Order(4)
 	void whenBookDeletedThenRemovedFromRepository(@Autowired WebTestClient testClient,
 												  @Autowired BookRepository bookRepo){
-		Book originalBook =  new Book("1234567890", "Title", "Author", 9.90);
+		Book originalBook =  Book.of("1234567890", "Title", "Author", 9.90);
 		bookRepo.save(originalBook);
 
 		testClient

@@ -1,0 +1,4 @@
+spring:
+  datasource:
+    url: jdbc:tc:postgresql:14.4:///tcpostgress
+#    url: jdbc:tc:postgresql:14.4:///tcpostgress?TC_INITSCRIPT=file:src/test/resources/schema.sql

@@ -40,10 +40,15 @@ public class BookService {
         return bookRepository.findByIsbn(isbn)
                 .map(existingBook -> {
                     var bookToUpdate = new Book(
+                            existingBook.id(),
                             existingBook.isbn(),
                             book.title(),
                             book.author(),
-                            book.price());
+                            null,
+                            book.price(),
+                            existingBook.createdDate(),
+                            existingBook.lastModifiedData(),
+                            existingBook.version());
                     return bookRepository.save(bookToUpdate);
                 })
                 .orElseGet(() -> addBookToCalalog(book));
