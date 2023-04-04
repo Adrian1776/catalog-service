@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.ama.training.polar.bookshop</groupId>
 	<artifactId>catalog-service</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>latest</version>
 	<name>Catalog Service</name>
 	<description>Catalog Service</description>
 	<properties>
